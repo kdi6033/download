@@ -6,7 +6,7 @@ i2r 보드용 1분 OTA 가이드 (세 가지만 수정)
 이 스케치는 i2r 보드(ESP32)가 부팅 후 GitHub에 올라있는 .bin 펌웨어를 HTTPS로 직접 다운로드 → 플래시에 기록 → 자동 재부팅까지 수행합니다.
 사용자는 딱 3곳만 바꾸면 됩니다.
 
-1) 수정할 곳 (3가지)
+## 1) 수정할 곳 (3가지)
 ```
 // 1) Wi-Fi SSID
 const char* ssid     = "i2r";
@@ -18,7 +18,7 @@ const char* password = "00000000";
 String fileName = "i2r-03.ino.bin";
 ```
 
-2) 사용 방법
+## 2) 사용 방법
 
 펌웨어(.bin) 업로드
 
@@ -35,7 +35,7 @@ String fileName = "i2r-03.ino.bin";
 
 다운로드/검증/플래시 기록이 완료되면 자동으로 재부팅되고, 새 펌웨어가 실행됩니다.
 
-3) 정상 동작 로그 예시
+## 3) 정상 동작 로그 예시
 
 ```
 [i2r OTA Firmware Updater]
@@ -50,7 +50,7 @@ Update Finished
 HTTP_UPDATE_OK
 ```
 
-4) 자주 묻는 질문(FAQ)
+## 4) 자주 묻는 질문(FAQ)
 
 파일을 못 찾는 경우
 fileName 철자와 업로드 위치(브랜치/폴더)를 다시 확인하세요.
@@ -63,7 +63,7 @@ Wi-Fi 신호 품질과 전원(케이블/어댑터)을 점검하세요.
 필요 시 URL을 다음처럼 바꿔 리다이렉트를 피할 수 있습니다.
 https://raw.githubusercontent.com/kdi6033/download/main/<fileName>
 
-5) 보안 참고
+## 5) 보안 참고
 
 샘플은 편의상 clientSecure.setInsecure();로 서버 인증서 검증을 생략합니다. 운영 환경에서는 루트 CA를 지정해 TLS 검증을 활성화하기를 권장합니다.
 
