@@ -66,8 +66,8 @@ https://raw.githubusercontent.com/kdi6033/download/main/<fileName>
 ## 5) 보안 참고
 
 샘플은 편의상 clientSecure.setInsecure();로 서버 인증서 검증을 생략합니다. 운영 환경에서는 루트 CA를 지정해 TLS 검증을 활성화하기를 권장합니다.
-<img width="507" height="821" alt="tool" src="https://github.com/user-attachments/assets/0fdb43de-8309-49db-843f-a70cfa61ecf1" />
-<img width="806" height="193" alt="file" src="https://github.com/user-attachments/assets/846920c3-1c34-4120-8dd2-94f3720c40cc" />
+<img width="200" height="821" alt="tool" src="https://github.com/user-attachments/assets/0fdb43de-8309-49db-843f-a70cfa61ecf1" />
+<img width="300" height="193" alt="file" src="https://github.com/user-attachments/assets/846920c3-1c34-4120-8dd2-94f3720c40cc" />
 
 
 아두이노 소스프로그램
