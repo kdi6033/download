@@ -65,10 +65,21 @@ https://raw.githubusercontent.com/kdi6033/download/main/<fileName>
 
 ## 5) 보안 참고
 
-샘플은 편의상 clientSecure.setInsecure();로 서버 인증서 검증을 생략합니다. 운영 환경에서는 루트 CA를 지정해 TLS 검증을 활성화하기를 권장합니다.
-<img width="300" height="821" alt="tool" src="https://github.com/user-attachments/assets/0fdb43de-8309-49db-843f-a70cfa61ecf1" />  
+샘플은 편의상 clientSecure.setInsecure();로 서버 인증서 검증을 생략합니다. 운영 환경에서는 루트 CA를 지정해 TLS 검증을 활성화하기를 권장합니다.    
+아두이노 tool 은 다음과 같이 선택하세요
+<img width="300" height="821" alt="tool" src="https://github.com/user-attachments/assets/0fdb43de-8309-49db-843f-a70cfa61ecf1" />    
+partitions.csv 파일을 같은 디렉토리에 작성하세요
 <img width="500" height="193" alt="file" src="https://github.com/user-attachments/assets/846920c3-1c34-4120-8dd2-94f3720c40cc" />
-
+partitions.csv
+```
+# Name,   Type, SubType, Offset,   Size,      Flags
+nvs,      data, nvs,     0x9000,   0x5000,
+otadata,  data, ota,     0xe000,   0x2000,
+app0,     app,  ota_0,   0x10000,  0x280000,
+app1,     app,  ota_1,   0x290000, 0x280000,
+coredump, data, coredump,0x510000, 0x10000,
+spiffs,   data, spiffs,  0x520000, 0x1E0000 
+```
 
 아두이노 소스프로그램
 ```
@@ -172,14 +183,5 @@ void loop() {
 }
 
 ```
-partitions.csv
-```
-# Name,   Type, SubType, Offset,   Size,      Flags
-nvs,      data, nvs,     0x9000,   0x5000,
-otadata,  data, ota,     0xe000,   0x2000,
-app0,     app,  ota_0,   0x10000,  0x280000,
-app1,     app,  ota_1,   0x290000, 0x280000,
-coredump, data, coredump,0x510000, 0x10000,
-spiffs,   data, spiffs,  0x520000, 0x1E0000 
-```
+
 
