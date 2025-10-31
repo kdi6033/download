@@ -206,8 +206,8 @@ void loop() {
 #include <WiFiClientSecure.h>
 #include <HTTPUpdate.h>
 
-const char* ssid     = "i2r";        // 🔹 Wi-Fi SSID
-const char* password = "00000000";   // 🔹 Wi-Fi PASSWORD
+const char* ssid     = "i2r";     // 🔹 Wi-Fi SSID
+const char* password = "00000000";    // 🔹 Wi-Fi PASSWORD
 String fileName = "i2r-03.ino.bin";
 
 // -----------------------------------------------------
@@ -218,7 +218,7 @@ void download_program() {
     WiFiClientSecure clientSecure;
     clientSecure.setInsecure();  // 인증서 검증 무시
 
-    // 콜백 함수 등록
+    // 콜백 등록
     httpUpdate.onStart([]() {
       Serial.println("🔹 Update Started");
     });
@@ -236,7 +236,7 @@ void download_program() {
     String url = "https://github.com/kdi6033/download/raw/main/" + fileName;
     Serial.println("📥 Downloading from: " + url);
 
-    // OTA 업데이트 실행
+    // OTA 실행
     t_httpUpdate_return ret = httpUpdate.update(clientSecure, url);
 
     switch (ret) {
@@ -298,7 +298,9 @@ void setup() {
 
     Serial.read();  // 입력 버퍼 비우기
     Serial.println("🔹 OTA 다운로드를 시작합니다...");
-    
+
+    // ✅ 실제 다운로드 실행
+    download_program();
 
     Serial.println("\n⚙️  다운로드가 실패했거나 완료되지 않았습니다.");
     Serial.println("👉 다시 시도하려면 아무 키나 누르세요.");
