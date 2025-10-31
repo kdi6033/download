@@ -184,4 +184,133 @@ void loop() {
 
 ```
 
+앞에 프로그램이 접속이 않될 때가 많습니다. 다음은 아두노 시리얼 모니터에 아무글자나 입력하고 리턴키를 누르면 다운로드 되고 실패시 계속 반복 됩니다.
+<img width="1015" height="459" alt="image" src="https://github.com/user-attachments/assets/160186ae-cd9d-4d10-9a08-9651cbc591e2" />
+
+```
+/*
+ * i2r IoT PLC OTA Firmware Updater (ESP32 v3.3.0 Compatible)
+ * 기능:
+ *  1️⃣ Wi-Fi 연결
+ *  2️⃣ GitHub .bin 파일 OTA 다운로드
+ *  3️⃣ 다운로드 진행률(%) 표시
+ *  4️⃣ 완료 시 자동 재부팅
+ *  5️⃣ 키 입력 시 시작 / 실패 시 재시도 가능
+ *
+ * 작성자: 김동일 교수 (Doowon Univ.)
+ * GitHub: https://github.com/kdi6033/download
+ */
+
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPUpdate.h>
+
+const char* ssid     = "i2r";        // 🔹 Wi-Fi SSID
+const char* password = "00000000";   // 🔹 Wi-Fi PASSWORD
+String fileName = "i2r-03.ino.bin";
+
+// -----------------------------------------------------
+// OTA 다운로드 함수
+// -----------------------------------------------------
+void download_program() {
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiClientSecure clientSecure;
+    clientSecure.setInsecure();  // 인증서 검증 무시
+
+    // 콜백 함수 등록
+    httpUpdate.onStart([]() {
+      Serial.println("🔹 Update Started");
+    });
+    httpUpdate.onEnd([]() {
+      Serial.println("✅ Update Finished");
+    });
+    httpUpdate.onProgress([](int cur, int total) {
+      Serial.printf("Progress: %d%%\n", (cur * 100) / total);
+    });
+    httpUpdate.onError([](int error) {
+      Serial.printf("❌ Update Error: %d\n", error);
+    });
+
+    httpUpdate.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
+    String url = "https://github.com/kdi6033/download/raw/main/" + fileName;
+    Serial.println("📥 Downloading from: " + url);
+
+    // OTA 업데이트 실행
+    t_httpUpdate_return ret = httpUpdate.update(clientSecure, url);
+
+    switch (ret) {
+      case HTTP_UPDATE_FAILED:
+        Serial.printf("❌ HTTP_UPDATE_FAILED (%d): %s\n",
+                      httpUpdate.getLastError(),
+                      httpUpdate.getLastErrorString().c_str());
+        break;
+      case HTTP_UPDATE_NO_UPDATES:
+        Serial.println("⚠️  No updates available.");
+        break;
+      case HTTP_UPDATE_OK:
+        Serial.println("✅ Update successful! Rebooting...");
+        break;
+    }
+  } else {
+    Serial.println("❌ WiFi not connected. Cannot start OTA.");
+  }
+}
+
+// -----------------------------------------------------
+// Wi-Fi 연결 함수
+// -----------------------------------------------------
+void connectWiFi() {
+  Serial.printf("Connecting to WiFi SSID: %s\n", ssid);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  unsigned long startAttemptTime = millis();
+
+  while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.print("✅ WiFi connected! IP: ");
+    Serial.println(WiFi.localIP());
+  } else {
+    Serial.println("❌ WiFi connection failed.");
+  }
+}
+
+// -----------------------------------------------------
+// setup()
+// -----------------------------------------------------
+void setup() {
+  Serial.begin(115200);
+  Serial.println("\n[i2r OTA Firmware Updater v2]");
+  
+  connectWiFi();
+
+  while (true) {
+    Serial.println("\n▶ 아무 키나 누르면 OTA 다운로드를 시작합니다...");
+    while (!Serial.available()) {
+      delay(100);
+    }
+
+    Serial.read();  // 입력 버퍼 비우기
+    Serial.println("🔹 OTA 다운로드를 시작합니다...");
+    
+
+    Serial.println("\n⚙️  다운로드가 실패했거나 완료되지 않았습니다.");
+    Serial.println("👉 다시 시도하려면 아무 키나 누르세요.");
+    while (!Serial.available()) {
+      delay(100);
+    }
+    Serial.read();
+  }
+}
+
+void loop() {
+  // OTA 완료 시 자동 재부팅되므로 loop는 비워둡니다.
+}
+```
+
 
