@@ -1,5 +1,15 @@
-# download
-i2r 제품의 펌웨어를 아두이노 프로그램하여 다운로드 합니다.
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=220&section=header&text=Download&fontSize=50&animation=fadeIn&fontAlignY=38&desc=IoT%20·%20피지컬%20AI%20·%20온디바이스%20AI%20기반의%20스마트%20공장%20자동화%20솔루션&descAlignY=55&descAlign=50" />
+</div>
+
+<div align="center">
+  <a href="https://i2r.link">🌐 공식 홈페이지</a> &nbsp;&nbsp; | &nbsp;&nbsp;
+  <a href="https://i2r.link/products">🛒 i2r 제품구매</a> &nbsp;&nbsp; | &nbsp;&nbsp;
+  <a href="https://www.youtube.com/@i2r-link">▶️ YouTube</a>
+</div>
+----
+
+i2r 제품의 최신 펌웨어를 아두이노 프로그램하여 직접 다운로드 합니다.
 
 i2r 보드용 1분 OTA 가이드 (세 가지만 수정)
 
