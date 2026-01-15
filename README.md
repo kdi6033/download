@@ -25,7 +25,6 @@ String fileName = "i2r-03.ino.bin";
 펌웨어(.bin) 업로드
 
 자신의 펌웨어 바이너리를 GitHub 저장소의 download/main 경로에 업로드합니다.
-(이 레포 예시: https://github.com/kdi6033/download)
 
 스케치 빌드 & 업로드
 
@@ -37,35 +36,7 @@ String fileName = "i2r-03.ino.bin";
 
 다운로드/검증/플래시 기록이 완료되면 자동으로 재부팅되고, 새 펌웨어가 실행됩니다.
 
-## 3) 정상 동작 로그 예시
-
-```
-[i2r OTA Firmware Updater]
-Connecting to WiFi SSID: i2r
-✅ WiFi connected! IP: 192.168.x.x
-Downloading from: https://github.com/.../i2r-03.ino.bin
-Update Started
-Progress: 5%
-...
-Progress: 100%
-Update Finished
-HTTP_UPDATE_OK
-```
-
-## 4) 자주 묻는 질문(FAQ)
-
-파일을 못 찾는 경우
-fileName 철자와 업로드 위치(브랜치/폴더)를 다시 확인하세요.
-
-중간에 끊김(연결 손실) 발생
-Wi-Fi 신호 품질과 전원(케이블/어댑터)을 점검하세요.
-(팁: 대용량 파일은 라우터 근처에서 테스트하면 성공률이 높습니다.)
-
-리다이렉트가 원인 같아요
-필요 시 URL을 다음처럼 바꿔 리다이렉트를 피할 수 있습니다.
-https://raw.githubusercontent.com/kdi6033/download/main/<fileName>
-
-## 5) 보안 참고
+## 2) 보안 참고
 
 샘플은 편의상 clientSecure.setInsecure();로 서버 인증서 검증을 생략합니다. 운영 환경에서는 루트 CA를 지정해 TLS 검증을 활성화하기를 권장합니다.    
 아두이노 tool 은 다음과 같이 선택하세요     
@@ -83,110 +54,7 @@ coredump, data, coredump,0x510000, 0x10000,
 spiffs,   data, spiffs,  0x520000, 0x1E0000 
 ```
 
-아두이노 소스프로그램
-```
-/*
- * i2r IoT PLC OTA Firmware Updater (ESP32 v3.3.0 Compatible)
- * 기능:
- *  1️⃣ Wi-Fi 연결
- *  2️⃣ GitHub .bin 파일 OTA 다운로드
- *  3️⃣ 다운로드 진행률(%) 표시
- *  4️⃣ 완료 시 자동 재부팅
- *
- * 작성자: 김동일 교수 (Doowon Univ.)
- * GitHub: https://github.com/kdi6033/download
- */
-
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#include <HTTPUpdate.h>
-
-const char* ssid     = "i2r";        // 🔹 Wi-Fi SSID
-const char* password = "00000000";   // 🔹 Wi-Fi PASSWORD
-String fileName = "i2r-03.ino.bin";
-
-// 다운로드 함수 
-void download_program() {
-  if (WiFi.status() == WL_CONNECTED) {
-    WiFiClientSecure clientSecure;
-    clientSecure.setInsecure();  // 인증서 검증 무시
-
-    // Add optional callback notifiers
-    httpUpdate.onStart([]() {
-      Serial.println("Update Started");
-    });
-    httpUpdate.onEnd([]() {
-      Serial.println("Update Finished");
-    });
-    httpUpdate.onProgress([](int cur, int total) {
-      Serial.printf("Progress: %d%%\n", (cur * 100) / total);
-    });
-    httpUpdate.onError([](int error) {
-      Serial.printf("Update Error: %d\n", error);
-    });
-
-    httpUpdate.setFollowRedirects(HTTPC_STRICT_FOLLOW_REDIRECTS);
-    String url = "https://github.com/kdi6033/download/raw/main/" + fileName;
-    Serial.println("Downloading from: " + url);
-    
-    // 서버에서 HTTP 응답 코드 확인 추가
-    t_httpUpdate_return ret = httpUpdate.update(clientSecure, url);
-    Serial.printf("HTTP Code: %d\n", clientSecure.connected() ? clientSecure.available() : -1);
-  
-    switch (ret) {
-      case HTTP_UPDATE_FAILED:
-        Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
-        break;
-
-      case HTTP_UPDATE_NO_UPDATES:
-        Serial.println("HTTP_UPDATE_NO_UPDATES");
-        break;
-
-      case HTTP_UPDATE_OK:
-        Serial.println("HTTP_UPDATE_OK");
-        break;
-    }
-  }
-}
-
-
-void setup() {
-  Serial.begin(115200);
-
-  Serial.println("\n[i2r OTA Firmware Updater]");
-  Serial.printf("Connecting to WiFi SSID: %s\n", ssid);
-
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  // WiFi 연결 대기
-  while (WiFi.status() != WL_CONNECTED ) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println();
-
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("❌ WiFi connection failed! Rebooting in 5 seconds...");
-    delay(5000);
-    ESP.restart();
-  }
-
-  Serial.print("✅ WiFi connected! IP: ");
-  Serial.println(WiFi.localIP());
-
-  download_program();
-
-}
-
-void loop() {
-  // OTA 실행 후 자동 재부팅하므로 loop는 비워둡니다.
-  delay(1000);
-}
-
-```
-
-✅  앞에 프로그램이 접속이 않될 때가 많습니다. 다음은 아두노 시리얼 모니터에 아무글자나 입력하고 리턴키를 누르면 다운로드 되고 실패시 계속 반복 됩니다.    
+✅  다음은 아두이노 시리얼 모니터에 아무글자나 입력하고 리턴키를 누르면 다운로드 되고 실패시 반복해서 다시 성공 할 때까지 글자를 입력하세요.    
 
 <img width="700" alt="image" src="https://github.com/user-attachments/assets/160186ae-cd9d-4d10-9a08-9651cbc591e2" />
 
